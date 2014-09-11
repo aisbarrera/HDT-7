@@ -1,18 +1,25 @@
+//****************************************************************
+// Autores: Otto Wantland Carne: 13663 Diego Rodriguez Carne: 13111
+// Seccion: 20
+//Fecha 9/8/14
+// Nombre de Archivo: Archivo.java
+// Breve Descripcion: Clase que se encarga de cargar el archivo de texto para poder usarlo en la calculadora
+//*****************************************************************
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package hdt7;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
 /**
  *
  * @author andreabarrera
  */
-public class Archivo {
+
+import java.io.*;
+public class Archivo 
+{
+    //ATRIBUTOS
     private File archivo;
     private BufferedReader br;
     private FileReader fr;
