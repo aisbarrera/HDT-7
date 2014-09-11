@@ -26,6 +26,8 @@ public class Diccionario
 		arbol = new BST();
 		palabras = miArchivo.leerArchivo();
                 miSet = new TreeSet();
+                Asociar();
+                traduccion();
 	}
 	
 	public void Asociar()
@@ -48,4 +50,7 @@ public class Diccionario
                         
                     }
 	}
+        public String traduccion(){
+            return "frase traducida: \n" + miSet.toArray();
+        }
 }
