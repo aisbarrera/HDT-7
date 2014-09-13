@@ -14,6 +14,7 @@ public class DriverDiccionario
 		Diccionario miDiccionario = new Diccionario("Diccionario", "Oracion");
 		miDiccionario.Asociar();
 		miDiccionario.Ejecutar();
+                System.out.println("\n\nrecorrido in-order: ");
                 miDiccionario.inOrder();
                 
 	}
