@@ -1,41 +1,170 @@
 /*************************************************************************
-*Programa: BST.java
-*Autores: Otto Wantland 13663  Diego Rodriguez 13111   Andrea Barrera
-*Funcion: Implementacion de un arbol binario de busqueda que se utilizara para encontrar las palabras en un diccionario
-*Programa tomado de: http://algs4.cs.princeton.edu/32bst/BST.java.html  Autor: Robert Sedgewick y Kevin Wayne
+Programa: BST.java
+Autores: Otto Wantland 13663  Diego Rodriguez 13111   Andrea Barrera 13655
+Funcion: Implementacion de un arbol binario de busqueda que se utilizara para encontrar las palabras en un diccionario
+Programa tomado de: http://algs4.cs.princeton.edu/32bst/BST.java.html  Autor: Robert Sedgewick y Kevin Wayne
  *************************************************************************/
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package hdt7;
 
-/**
- *
- * @author andreabarrera
- */
+import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.*;
 
 public class BST<Key extends Comparable<Key>, Value> {
-    private Node root;             // root of BST
-    private Set<String> miSet;
+    private Node root; // root of BST
+    private BST miTree;
 
+    public class Queue<Item> implements Iterable<Item> {
+    private int N;               // number of elements on queue
+    private Node<Item> first;    // beginning of queue
+    private Node<Item> last;     // end of queue
 
+    // helper linked list class
+    private class Node<Item> {
+        private Item item;
+        private Node<Item> next;
+    }
+
+    /**
+     * Initializes an empty queue.
+     */
+    public Queue() {
+        first = null;
+        last  = null;
+        N = 0;
+    }
+
+    /**
+     * Is this queue empty?
+     * @return true if this queue is empty; false otherwise
+     */
+    public boolean isEmpty() {
+        return first == null;
+    }
+
+    /**
+     * Returns the number of items in this queue.
+     * @return the number of items in this queue
+     */
+    public int size() {
+        return N;     
+    }
+
+    /**
+     * Returns the item least recently added to this queue.
+     * @return the item least recently added to this queue
+     * @throws java.util.NoSuchElementException if this queue is empty
+     */
+    public Item peek() {
+        if (isEmpty()) throw new NoSuchElementException("Queue underflow");
+        return first.item;
+    }
+
+    /**
+     * Adds the item to this queue.
+     * @param item the item to add
+     */
+    public void enqueue(Item item) {
+        Node<Item> oldlast = last;
+        last = new Node<Item>();
+        last.item = item;
+        last.next = null;
+        if (isEmpty()) first = last;
+        else oldlast.next = last;
+        N++;
+    }
+
+    /**
+     * Removes and returns the item on this queue that was least recently added.
+     * @return the item on this queue that was least recently added
+     * @throws java.util.NoSuchElementException if this queue is empty
+     */
+    public Item dequeue() {
+        if (isEmpty()) throw new NoSuchElementException("Queue underflow");
+        Item item = first.item;
+        first = first.next;
+        N--;
+        if (isEmpty()) last = null;   // to avoid loitering
+        return item;
+    }
+
+    /**
+     * Returns a string representation of this queue.
+     * @return the sequence of items in FIFO order, separated by spaces
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Item item : this)
+            s.append(item + " ");
+        return s.toString();
+    } 
+
+    /**
+     * Returns an iterator that iterates over the items in this queue in FIFO order.
+     * @return an iterator that iterates over the items in this queue in FIFO order
+     */
+    public Iterator<Item> iterator()  {
+        return new ListIterator<Item>(first);  
+    }
+
+    // an iterator, doesn't implement remove() since it's optional
+    private class ListIterator<Item> implements Iterator<Item> {
+        private Node<Item> current;
+
+        public ListIterator(Node<Item> first) {
+            current = first;
+        }
+
+        @Override
+        public boolean hasNext()  { return current != null;                     }
+        @Override
+        public void remove()      { throw new UnsupportedOperationException();  }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            Item item = current.item;
+            current = current.next; 
+            return item;
+        }
+    }
+}
+    
     private class Node {
-        private Key K;           // sorted by key
-        private Value V;         // associated data
+        private Key key;           // sorted by key
+        private Value val;         // associated data
         private Node left, right;  // left and right subtrees
         private int N;             // number of nodes in subtree
 
         public Node(Key key, Value val, int N) {
-            this.K = key;
-            this.V = val;
+            this.key = key;
+            this.val = val;
             this.N = N;
         }
+        
+        public Node getLeft(){
+            return left;
+        }
+        public Node getRight(){
+            return right;
+        }
+        public int getN(){
+            return N;
+        }
+        public void printNodeValue(Node root){
+            System.out.print(root.key);
+            System.out.println(","+root.val);
+    }
     }
 
-    // is the symbol table empty?
+    /**
+     *
+     * @return
+     */
+    public Node getroot(){
+        return root;
+    }
+    
+    // is the symbol table empty
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -67,10 +196,10 @@ public class BST<Key extends Comparable<Key>, Value> {
 
     private Value get(Node x, Key key) {
         if (x == null) return null;
-        int cmp = key.compareTo(x.K);
+        int cmp = key.compareTo(x.key);
         if      (cmp < 0) return get(x.left, key);
         else if (cmp > 0) return get(x.right, key);
-        else              return x.V;
+        else              return x.val;
     }
 
    /***********************************************************************
@@ -81,13 +210,13 @@ public class BST<Key extends Comparable<Key>, Value> {
         if (val == null) { delete(key); return; }
         root = put(root, key, val);
     }
-    
+
     private Node put(Node x, Key key, Value val) {
         if (x == null) return new Node(key, val, 1);
-        int cmp = key.compareTo(x.K);
+        int cmp = key.compareTo(x.key);
         if      (cmp < 0) x.left  = put(x.left,  key, val);
         else if (cmp > 0) x.right = put(x.right, key, val);
-        else              x.V   = val;
+        else              x.val   = val;
         x.N = 1 + size(x.left) + size(x.right);
         return x;
     }
@@ -126,7 +255,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 
     private Node delete(Node x, Key key) {
         if (x == null) return null;
-        int cmp = key.compareTo(x.K);
+        int cmp = key.compareTo(x.key);
         if      (cmp < 0) x.left  = delete(x.left,  key);
         else if (cmp > 0) x.right = delete(x.right, key);
         else { 
@@ -139,4 +268,150 @@ public class BST<Key extends Comparable<Key>, Value> {
         x.N = size(x.left) + size(x.right) + 1;
         return x;
     } 
+   
+    public Key min() {
+        if (isEmpty()) return null;
+        return min(root).key;
+    } 
+
+    private Node min(Node x) { 
+        if (x.left == null) return x; 
+        else                return min(x.left); 
+    } 
+
+    public Key max() {
+        if (isEmpty()) return null;
+        return max(root).key;
+    } 
+
+    private Node max(Node x) { 
+        if (x.right == null) return x; 
+        else                 return max(x.right); 
+    } 
+
+    public Key floor(Key key) {
+        Node x = floor(root, key);
+        if (x == null) return null;
+        else return x.key;
+    } 
+
+    private Node floor(Node x, Key key) {
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) return x;
+        if (cmp <  0) return floor(x.left, key);
+        Node t = floor(x.right, key); 
+        if (t != null) return t;
+        else return x; 
+    } 
+
+    public Key ceiling(Key key) {
+        Node x = ceiling(root, key);
+        if (x == null) return null;
+        else return x.key;
+    }
+
+    private Node ceiling(Node x, Key key) {
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) return x;
+        if (cmp < 0) { 
+            Node t = ceiling(x.left, key); 
+            if (t != null) return t;
+            else return x; 
+        } 
+        return ceiling(x.right, key); 
+    } 
+
+   /***********************************************************************
+    *  Rank and selection
+    ***********************************************************************/
+    public Key select(int k) {
+        if (k < 0 || k >= size())  return null;
+        Node x = select(root, k);
+        return x.key;
+    }
+
+    // Return key of rank k. 
+    private Node select(Node x, int k) {
+        if (x == null) return null; 
+        int t = size(x.left); 
+        if      (t > k) return select(x.left,  k); 
+        else if (t < k) return select(x.right, k-t-1); 
+        else            return x; 
+    } 
+
+    public int rank(Key key) {
+        return rank(key, root);
+    } 
+
+    // Number of keys in the subtree less than key.
+    private int rank(Key key, Node x) {
+        if (x == null) return 0; 
+        int cmp = key.compareTo(x.key); 
+        if      (cmp < 0) return rank(key, x.left); 
+        else if (cmp > 0) return 1 + size(x.left) + rank(key, x.right); 
+        else              return size(x.left); 
+    } 
+
+   /***********************************************************************
+    *  Range count and range search.
+    ***********************************************************************/
+    public Iterable<Key> keys() {
+        return keys(min(), max());
+    }
+
+    public Iterable<Key> keys(Key lo, Key hi) {
+        Queue<Key> queue = new Queue<Key>();
+        keys(root, queue, lo, hi);
+        return queue;
+    } 
+
+    private void keys(Node x, Queue<Key> queue, Key lo, Key hi) { 
+        if (x == null) return; 
+        int cmplo = lo.compareTo(x.key); 
+        int cmphi = hi.compareTo(x.key); 
+        if (cmplo < 0) keys(x.left, queue, lo, hi); 
+        if (cmplo <= 0 && cmphi >= 0) queue.enqueue(x.key); 
+        if (cmphi > 0) keys(x.right, queue, lo, hi); 
+    } 
+
+    public int size(Key lo, Key hi) {
+        if (lo.compareTo(hi) > 0) return 0;
+        if (contains(hi)) return rank(hi) - rank(lo) + 1;
+        else              return rank(hi) - rank(lo);
+    }
+
+
+    // height of this BST (one-node tree has height 0)
+    public int height() { return height(root); }
+    private int height(Node x) {
+        if (x == null) return -1;
+        return 1 + Math.max(height(x.left), height(x.right));
+    }
+
+
+    // level order traversal
+    public Iterable<Key> levelOrder() {
+        Queue<Key> keys = new Queue<Key>();
+        Queue<Node> queue = new Queue<Node>();
+        queue.enqueue(root);
+        while (!queue.isEmpty()) {
+            Node x = queue.dequeue();
+            if (x == null) continue;
+            queue.enqueue(x.left);
+            keys.enqueue(x.key);
+            queue.enqueue(x.right);
+        }
+        return keys;
+    }
+    
+    
+   public void inOrder (Node root){
+       if(root == null) return;
+       inOrder(root.getLeft());
+       root.printNodeValue(root);
+       inOrder(root.getRight()); 
+  
+}
 }

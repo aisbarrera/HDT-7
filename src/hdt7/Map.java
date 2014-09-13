@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package hdt7;
-
-/**
- *
- * @author andreabarrera
- */
 import java.util.*;
 /**
  * Associations establish a link between a key and a value.  

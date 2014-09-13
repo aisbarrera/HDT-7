@@ -1,21 +1,10 @@
 //****************************************************************
-// Autores: Otto Wantland Carne: 13663 Diego Rodriguez Carne: 13111
+// Autores: Otto Wantland Carne: 13663 Diego Rodriguez Carne: 13111 Andrea Barrera
 // Seccion: 20
-//Fecha 9/8/14
+//Fecha 12/9/14
 // Nombre de Archivo: Archivo.java
 // Breve Descripcion: Clase que se encarga de cargar el archivo de texto para poder usarlo en la calculadora
 //*****************************************************************
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package hdt7;
-
-/**
- *
- * @author andreabarrera
- */
-
 import java.io.*;
 public class Archivo 
 {
@@ -23,6 +12,7 @@ public class Archivo
     private File archivo;
     private BufferedReader br;
     private FileReader fr;
+    private String datos;
 
     //Constructor
     //Busca el archivo y prepara un filereader y bufferreader para poder transformarlo a String
@@ -53,21 +43,17 @@ public class Archivo
     //Encontrado en: http://www.mkyong.com/java/how-to-read-file-from-java-bufferedreader-example/
     public String leerArchivo()
     {
-            String datos = new String("");
-            try
-            {
-                    String SLine;
-                    while((SLine=br.readLine())!=null)
-                    {
-                            datos = SLine;
-                    }
-                    fr.close();
-            }
-            catch (Exception e)
-            {
-                    System.out.println(e.getMessage());
-            }
-
-            return datos;
+    	try
+    	{
+            datos = br.readLine();	
+    	}
+    catch (IOException e)
+    {
+    	e.printStackTrace();
+    }
+    finally
+    {
+    	return datos;
+    }
     }
 }

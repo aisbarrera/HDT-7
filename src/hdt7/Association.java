@@ -1,14 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package hdt7;
-
-/**
- *
- * @author andreabarrera
- */
-
 // A class for binding key/value pairs.
 // (c) 1998,2001 duane a. bailey
 import java.util.Map;
